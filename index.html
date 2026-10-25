@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy Feet Dance Club</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #fff9ed;
+  color: #25392e;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+}
+
+header {
+  max-width: 1200px;
+  margin: auto;
+  padding: 25px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+header span {
+  display: inline-block;
+  padding: 12px;
+  background: #d7ec7b;
+  border-radius: 15px;
+  margin-right: 10px;
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+.intro { text-align: center; }
+
+.eyebrow {
+  color: #527044;
+  font-size: 13px;
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+
+h1 {
+  font-size: clamp(40px, 7vw, 70px);
+  line-height: 1.1;
+  margin: 20px 0;
+}
+
+p {
+  color: #657063;
+  line-height: 1.6;
+}
+
+.party {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  margin-top: 30px;
+  background: #e8edce;
+  border: 1px solid #dfe5c5;
+  border-radius: 32px;
+  overflow: hidden;
+}
+
+.stage {
+  min-height: 450px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 70%, #fff8de, transparent 65%);
+}
+
+.shadow {
+  position: absolute;
+  width: 240px;
+  height: 30px;
+  border-radius: 50%;
+  background: #a1ac7255;
+  bottom: 35px;
+}
+
+.status {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px 15px;
+  border-radius: 25px;
+  background: #fffaf0;
+  font-size: 14px;
+}
+
+.note {
+  position: absolute;
+  font-size: 45px;
+  color: #719555;
+}
+
+.note.one { left: 35px; top: 90px; }
+.note.two { right: 35px; top: 70px; color: #e38a60; }
+.note.three { left: 60px; bottom: 70px; color: #d0a844; }
+
+.controls {
+  padding: 30px;
+  background: #ffffff80;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+h2 { margin: 0; font-size: 25px; }
+
+.controls p {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+button {
+  padding: 15px;
+  border: 1px solid #dce2cb;
+  border-radius: 15px;
+  background: #fffdf5;
+  color: #25392e;
+  font: inherit;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+button:hover { transform: translateY(-2px); }
+
+button:focus-visible {
+  outline: 3px solid #25392e;
+  outline-offset: 3px;
+}
+
+.move { text-align: left; }
+.move.active { background: #d4e88a; }
+#freeze { background: #253f32; color: white; }
+#sound { background: transparent; border-color: #a7b78e; }
+
+.tip { text-align: center; font-size: 12px !important; }
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #74816b;
+  font-size: 14px;
+}
+
+.boy {
+  width: 210px;
+  height: 330px;
+  z-index: 1;
+  transform-origin: 50% 90%;
+  animation: wiggle .65s infinite alternate ease-in-out;
+}
+
+.boy svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.arm, .leg {
+  transform-box: fill-box;
+  transform-origin: 50% 10%;
+  animation: swing .65s infinite alternate ease-in-out;
+}
+
+.right { animation-direction: alternate-reverse; }
+
+.leg {
+  transform-origin: 50% 0;
+  animation-name: step;
+}
+
+.boy.hop { animation: hop .5s infinite alternate ease-in-out; }
+.boy.robot { animation: robot 1s infinite steps(2); }
+
+.paused, .paused * {
+  animation-play-state: paused !important;
+}
+
+.confetti {
+  position: absolute;
+  top: -30px;
+  font-size: 24px;
+  animation: fall 2.2s linear forwards;
+  pointer-events: none;
+  z-index: 4;
+}
+
+@keyframes wiggle {
+  from { transform: rotate(-9deg); }
+  to { transform: rotate(9deg) translateY(-10px); }
+}
+
+@keyframes swing {
+  from { transform: rotate(-35deg); }
+  to { transform: rotate(40deg); }
+}
+
+@keyframes step {
+  to { transform: rotate(12deg); }
+}
+
+@keyframes hop {
+  to { transform: translateY(-38px) rotate(5deg); }
+}
+
+@keyframes robot {
+  25% { transform: rotate(-12deg); }
+  75% { transform: rotate(12deg) translateX(15px); }
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(500px) rotate(260deg);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .party { grid-template-columns: 1fr; }
+  .stage { min-height: 410px; }
+  .controls { padding: 25px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boy, .boy * { animation: none; }
+  .confetti { display: none; }
+}
+</style>
+</head>
+
+<body>
+<header><span>♫</span> Happy Feet</header>
+
+<main>
+  <section class="intro">
+    <div class="eyebrow">THE LIVING ROOM DANCE CLUB</div>
+    <h1>Small feet.<br>Big dance energy.</h1>
+    <p>Meet your new dance buddy. Pick a move and join the fun!</p>
+  </section>
+
+  <section class="party" aria-label="Interactive dance party">
+    <div class="stage" id="stage">
+      <div class="status" id="status" aria-live="polite">
+        ✦ Let's groove!
+      </div>
+
+      <span class="note one" aria-hidden="true">✳</span>
+      <span class="note two" aria-hidden="true">♫</span>
+      <span class="note three" aria-hidden="true">✧</span>
+
+      <div class="shadow"></div>
+
+      <div class="boy" id="boy" role="img"
+        aria-label="A smiling brown-skinned Black cartoon boy dancing">
+
+        <svg viewBox="0 0 210 330" aria-hidden="true">
+          <!-- Legs and sneakers -->
+          <g class="leg">
+            <rect x="65" y="210" width="34" height="82"
+              rx="16" fill="#496c50"/>
+            <path d="M65 279h34v20H49q-8-18 16-20"
+              fill="#fff9e9"/>
+            <path d="M48 299h52" stroke="#344d3c" stroke-width="5"/>
+          </g>
+
+          <g class="leg right">
+            <rect x="113" y="210" width="34" height="82"
+              rx="16" fill="#496c50"/>
+            <path d="M113 279h34q26 2 18 20h-52"
+              fill="#fff9e9"/>
+            <path d="M112 299h54" stroke="#344d3c" stroke-width="5"/>
+          </g>
+
+          <!-- Arms -->
+          <g class="arm">
+            <rect x="44" y="130" width="26" height="72"
+              rx="13" fill="#a96840"/>
+            <rect x="42" y="126" width="30" height="37"
+              rx="12" fill="#ed8855"/>
+            <circle cx="57" cy="202" r="14" fill="#a96840"/>
+          </g>
+
+          <g class="arm right">
+            <rect x="140" y="130" width="26" height="72"
+              rx="13" fill="#a96840"/>
+            <rect x="138" y="126" width="30" height="37"
+              rx="12" fill="#ed8855"/>
+            <circle cx="153" cy="202" r="14" fill="#a96840"/>
+          </g>
+
+          <!-- Shirt and neck -->
+          <rect x="64" y="119" width="83" height="110"
+            rx="27" fill="#ed8855"/>
+          <path d="M96 120v-17h21v17" fill="#a96840"/>
+
+          <!-- Face and ears -->
+          <circle cx="105" cy="73" r="47" fill="#b97b50"/>
+          <circle cx="59" cy="78" r="10" fill="#b97b50"/>
+          <circle cx="151" cy="78" r="10" fill="#b97b50"/>
+
+          <!-- Hair -->
+          <path d="M59 61q-6-47 46-48t46 48l-15-16-8 6-16-12-15 11-16-5-8 17"
+            fill="#303a2a"/>
+
+          <!-- Eyes -->
+          <g fill="#293326">
+            <ellipse cx="88" cy="73" rx="4" ry="5"/>
+            <ellipse cx="122" cy="73" rx="4" ry="5"/>
+          </g>
+
+          <!-- Smile -->
+          <path d="M89 90q17 20 33-1"
+            fill="#fff9e9" stroke="#633a28"
+            stroke-width="3" stroke-linejoin="round"/>
+
+          <circle cx="77" cy="86" r="6" fill="#d7916b"/>
+          <circle cx="134" cy="86" r="6" fill="#d7916b"/>
+
+          <!-- Shirt star -->
+          <path d="m105 151 5 12 14 1-11 9 4 14-12-8-12 8 4-14-11-9 14-1z"
+            fill="#ffedb6"/>
+        </svg>
+      </div>
+    </div>
+
+    <aside class="controls">
+      <h2>Make your move.</h2>
+      <p>Everybody has their own happy dance.</p>
+
+      <button class="move active" data-move="wiggle"
+        aria-pressed="true">〰 The Wiggle</button>
+
+      <button class="move" data-move="hop"
+        aria-pressed="false">☁ Bunny Hop</button>
+
+      <button class="move" data-move="robot"
+        aria-pressed="false">▣ The Robot</button>
+
+      <button id="freeze">⏸ Freeze!</button>
+      <button id="sound" aria-pressed="false">♫ Turn the beat on</button>
+
+      <p class="tip">Make a little space, then dance along!</p>
+    </aside>
+  </section>
+</main>
+
+<footer>Made for smiles, wiggles & little dance breaks. ☀</footer>
+
+<script>
+const boy = document.getElementById("boy");
+const statusText = document.getElementById("status");
+const freezeButton = document.getElementById("freeze");
+const soundButton = document.getElementById("sound");
+
+let paused = false;
+let currentMove = "wiggle";
+
+document.querySelectorAll(".move").forEach(button => {
+  button.addEventListener("click", () => {
+    currentMove = button.dataset.move;
+
+    boy.className =
+      "boy " +
+      (currentMove === "wiggle" ? "" : currentMove) +
+      (paused ? " paused" : "");
+
+    document.querySelectorAll(".move").forEach(other => {
+      const selected = other === button;
+      other.classList.toggle("active", selected);
+      other.setAttribute("aria-pressed", String(selected));
+    });
+
+    statusText.textContent = paused
+      ? "❄ Hold that pose!"
+      : "✦ " + button.textContent.slice(2).trim() + " time!";
+
+    celebrate();
+  });
+});
+
+freezeButton.addEventListener("click", () => {
+  paused = !paused;
+  boy.classList.toggle("paused", paused);
+
+  freezeButton.textContent = paused
+    ? "▶ Let's dance!"
+    : "⏸ Freeze!";
+
+  statusText.textContent = paused
+    ? "❄ Hold that pose!"
+    : "✦ Let's groove!";
+
+  if (!paused) celebrate();
+});
+
+function celebrate() {
+  for (let i = 0; i < 15; i++) {
+    const piece = document.createElement("span");
+    piece.className = "confetti";
+    piece.setAttribute("aria-hidden", "true");
+    piece.textContent = ["✦", "●", "♫"][i % 3];
+    piece.style.left = Math.random() * 100 + "%";
+    piece.style.color = ["#ed8855", "#709253", "#d4aa42"][i % 3];
+    piece.style.animationDelay = Math.random() * .4 + "s";
+
+    document.getElementById("stage").appendChild(piece);
+    setTimeout(() => piece.remove(), 2800);
+  }
+}
+
+/* Original instrumental beat generated in the browser. */
+let audioContext;
+let musicTimer;
+let playing = false;
+let beatStep = 0;
+
+function playBeat() {
+  const notes = [
+    261.63, 329.63, 392, 329.63,
+    293.66, 349.23, 440, 392
+  ];
+
+  const time = audioContext.currentTime;
+  const melody = audioContext.createOscillator();
+  const volume = audioContext.createGain();
+
+  melody.type = "sine";
+  melody.frequency.value = notes[beatStep % notes.length];
+
+  volume.gain.setValueAtTime(.09, time);
+  volume.gain.exponentialRampToValueAtTime(.001, time + .22);
+
+  melody.connect(volume).connect(audioContext.destination);
+  melody.start(time);
+  melody.stop(time + .23);
+
+  if (beatStep % 2 === 0) {
+    const drum = audioContext.createOscillator();
+    const drumVolume = audioContext.createGain();
+
+    drum.frequency.setValueAtTime(130, time);
+    drum.frequency.exponentialRampToValueAtTime(45, time + .12);
+
+    drumVolume.gain.setValueAtTime(.12, time);
+    drumVolume.gain.exponentialRampToValueAtTime(.001, time + .15);
+
+    drum.connect(drumVolume).connect(audioContext.destination);
+    drum.start(time);
+    drum.stop(time + .16);
+  }
+
+  beatStep++;
+}
+
+soundButton.addEventListener("click", async () => {
+  try {
+    if (!audioContext) {
+      const AudioClass =
+        window.AudioContext || window.webkitAudioContext;
+      audioContext = new AudioClass();
+    }
+
+    await audioContext.resume();
+    playing = !playing;
+
+    if (playing) {
+      playBeat();
+      musicTimer = setInterval(playBeat, 300);
+    } else {
+      clearInterval(musicTimer);
+    }
+
+    soundButton.textContent = playing
+      ? "♫ Turn the beat off"
+      : "♫ Turn the beat on";
+
+    soundButton.setAttribute("aria-pressed", String(playing));
+  } catch (error) {
+    statusText.textContent = "Music isn't available in this browser.";
+  }
+});
+</script>
+</body>
+</html>
